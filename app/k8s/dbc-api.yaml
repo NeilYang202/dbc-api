@@ -1,0 +1,65 @@
+---
+# ----------------------------------------------------
+# 后台服务
+# ----------------------------------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  # 部署的命名空间
+  namespace: base-system
+  # StatefulSet 的名称
+  name: dbc-api
+spec:
+  # 必须与 Headless Service 的名称匹配
+  serviceName: dbc-api
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbc-api
+  template:
+    metadata:
+      labels:
+        app: dbc-api
+    spec:
+      containers:
+      - name: dbc-api
+        # 使用您指定的镜像
+        image: dbcmanager_api:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: dbc-api
+        env:
+        # !!! 必须通过 Secret 提供 POSTGRES_PASSWORD，这是 PostgreSQL 镜像启动所必需的。
+        # 请确保您已经创建了一个名为 'postgres-secret' 且包含 'postgres-password' 键的 Secret。
+        - name: DATABASE_URL
+          value: 'postgresql+psycopg2://user:password@postgresql:5432/database'
+        - name: JWT_SECRET_KEY
+          value: 'keys'
+        - name: AUTH_USERNAME
+          value: 'user'
+        - name: AUTH_PASSWORD
+          value: 'password'
+        - name: CORS_ORIGINS
+          value: 'http://localhost'
+---
+# ----------------------------------------------------
+# NODEPORT SERVICE (发布后台地址)
+# ----------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbc-api-external
+  namespace: base-system
+  labels:
+    app: dbc-api-external
+spec:
+  ports:
+    - name: connect
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30836
+  selector:
+    app: dbc-api
+  type: NodePort
