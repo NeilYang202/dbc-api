@@ -1,0 +1,23 @@
+# --- Web 框架 ---
+fastapi
+uvicorn
+requests
+
+# --- ORM & PostgreSQL 驱动 ---
+SQLAlchemy
+psycopg2-binary
+
+# --- 表单解析 (FastAPI 依赖，用于 OAuth2PasswordRequestForm) ---
+python-multipart
+
+# --- JWT 认证 ---
+python-jose[cryptography]
+
+# --- UUID v7 生成器 ---
+uuid7
+
+# --- 配置与环境变量管理 ---
+pydantic
+pydantic[email]
+pydantic-settings
+python-dotenv
