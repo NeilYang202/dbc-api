@@ -23,6 +23,7 @@ class WorkLogBase(BaseModel):
     end_time: Optional[datetime] = None
     work_time: Optional[int] = Field(None, description="工作时长，单位分钟 (向上取整)") 
     remark: Optional[str] = None
+    create_at: Optional[datetime] = None
     # 💥 不包含 created_at 
 
     model_config = {

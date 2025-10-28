@@ -38,6 +38,7 @@ def get_work_logs(
             WorkLogModel.end_time,
             WorkLogModel.work_time,
             WorkLogModel.remark,
+            WorkLogModel.created_at,
         )
         .join(SystemUserModel, WorkLogModel.user_id == SystemUserModel.user_id, isouter=True)
         .filter(WorkLogModel.start_time >= start_time)
@@ -66,6 +67,7 @@ def get_work_logs(
             "end_time": r.end_time,
             "work_time": r.work_time,
             "remark": r.remark,
+            "created_at": r.created_at,
         })
 
     return {"count": len(logs), "data": logs}
