@@ -16,8 +16,8 @@ router = APIRouter(
 
 @router.get("/worklogs", summary="查询指定时间段内的工作日志（可按用户名过滤）")
 def get_work_logs(
-    start_time: datetime = Query(..., description="开始时间，格式如 2025-10-01T00:00:00"),
-    end_time: datetime = Query(..., description="结束时间，格式如 2025-10-24T23:59:59"),
+    start_time: datetime = Query(..., description="开始时间，格式如 2025-10-01 00:00:00"),
+    end_time: datetime = Query(..., description="结束时间，格式如 2025-10-24 23:59:59"),
     username: Optional[str] = Query(None, description="可选，用户名（不区分大小写）"),
     db: Session = Depends(get_db),
     token_data: dict = Depends(verify_jwt_token)
