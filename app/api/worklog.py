@@ -6,6 +6,7 @@ from datetime import datetime
 from app.db.session import get_db
 from app.db.models import WorkLogModel, SystemUserModel
 from app.api.token import verify_jwt_token  # 你的 JWT 验证依赖
+from datetime import timedelta
 
 router = APIRouter(
     prefix="/api",
@@ -57,17 +58,26 @@ def get_work_logs(
     # --- 格式化输出 ---
     logs = []
     for r in results:
+        # 转换时间格式
+        start_time_str = r.start_time.strftime("%Y-%m-%d %H:%M:%S") if r.start_time else None
+        end_time_str = r.end_time.strftime("%Y-%m-%d %H:%M:%S") if r.end_time else None    
+
+        # created_at 是 GMT 时间，加 8 小时
+        created_at_local = None
+        if r.created_at:
+            created_at_local = (r.created_at + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")    
+
         logs.append({
             "log_id": str(r.log_id),
             "user_id": str(r.user_id) if r.user_id else None,
             "username": r.username,
             "details": r.details,
             "audit_status": r.audit_status,
-            "start_time": r.start_time,
-            "end_time": r.end_time,
+            "start_time": start_time_str,
+            "end_time": end_time_str,
             "work_time": r.work_time,
             "remark": r.remark,
-            "created_at": r.created_at,
-        })
+            "created_at": created_at_local,
+        })    
 
     return {"count": len(logs), "data": logs}
